@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+                layout:decorate="myTemplate">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <div layout:fragment="fc">
+        <div class="container mt-2">
+            <div class="card">
+                <div class="card-header">Liste des produits</div>
+                <div class="card-body">
+                    <form th:action="@{home}" method="get" class="my-1">
+                        <label>Mot-clé</label>
+                        <input name="keyword" type="text" placeholder="tapez un mot-clé" th:value="${kw}">
+                        <button type="submit" class="btn btn-success">Chercher</button>
+                    </form>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Qte</th>
+                            <!--th>Action(s)</th-->
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product:${products}">
+                            <td th:text="${product.id}"></td>
+                            <td th:text="${product.name}"></td>
+                            <td th:text="${product.price}"></td>
+                            <td th:text="${product.qte}"></td>
+                            <td colspan="2">
+                                <a onclick="return confirm('Etes-vous sure?')" th:href="@{deleteProd(id=${product.id}, page=${currentPage}, keyword=${kw})}" class="btn btn-danger" sec:authorize="hasAuthority('ADMIN')">Supprimer</a>
+                                <a th:href="@{/editProd(id=${product.id}, page=${currentPage}, keyword=${kw})}" class="btn btn-primary ms-1" sec:authorize="hasAuthority('ADMIN')">Modifier</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <ul class="nav nav-pills">
+                        <li  th:each="pages,status:${nbPages}">
+                            <a th:text="${status.index}" th:href="@{home(page=${status.index}, keyword=${kw})}" th:class="${status.index==currentPage?'btn btn-info ms-1 my-1':'btn btn-outline-info ms-1 my-1'}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
